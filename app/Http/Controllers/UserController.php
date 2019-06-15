@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\UsersRequest;
+use App\User;
+use App\Role;
 
 class UserController extends Controller
 {
@@ -14,7 +17,8 @@ class UserController extends Controller
     public function index()
     {
         //
-        return view("admin.users.index");
+        $users = User::all();
+        return view("admin.users.index", compact('users'));
         
     }
 
@@ -26,7 +30,9 @@ class UserController extends Controller
     public function create()
     {
         //
-        return view('/posts/create');
+        $roles = Role::pluck('name', 'id')->all();
+        // return $roles;
+        return view('admin.users.create', compact('roles'));
     }
 
     /**
@@ -35,17 +41,18 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UsersRequest $request)
     {
-        // return $request->title;
+        User::create($request->all());
+        // return $request->all();
         
-        $this->validate($request, [
-            'title' => 'required',
-            'content' => 'required'
-        ]);
+        // $this->validate($request, [
+        //     'title' => 'required',
+        //     'content' => 'required'
+        // ]);
         
-        Post::create(['title'=>$request->title , 'content'=>$request->content]);
-        return redirect("posts");
+        // Post::create(['title'=>$request->title , 'content'=>$request->content]);
+        return redirect("users");
     }
 
     /**
@@ -57,8 +64,8 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $thePost = Post::find($id);
-        return view("posts.show", compact('thePost'));
+        $user = User::find($id);
+        return view("posts.show", compact('user'));
     }
 
     /**
@@ -70,8 +77,8 @@ class UserController extends Controller
     public function edit($id)
     {
         //
-        $thePost = Post::find($id);
-        return view("posts.edit", compact('thePost'));
+        $user = User::find($id);
+        return view("users.edit", compact('user'));
         
     }
 
@@ -85,10 +92,9 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
-        
-        $thePost = Post::find($id);
-        $thePost->update($request->all());
-        return redirect("posts/$thePost->id");
+        $user = User::find($id);
+        $user->update($request->all());
+        return redirect("users/$user->id");
     }
 
     /**
@@ -100,8 +106,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $thePost = Post::whereId($id)->delete();
-        return redirect('posts');
+        User::whereId($id)->delete();
+        return redirect('users');
         
     }
 }
