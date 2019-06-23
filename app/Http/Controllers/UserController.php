@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\UsersRequest;
 use App\User;
+use App\Photo;
 use App\Role;
 
 class UserController extends Controller
@@ -43,15 +44,21 @@ class UserController extends Controller
      */
     public function store(UsersRequest $request)
     {
-        User::create($request->all());
-        // return $request->all();
         
-        // $this->validate($request, [
-        //     'title' => 'required',
-        //     'content' => 'required'
-        // ]);
+        $row = $request->all();
+
+        if($img = $request->file('img_path')){
+            $name = time() . $img->getClientOriginalName();
+            $img->move('images', $name);
+            $photo = Photo::create([ 'path'=>$name ]);
+
+            $row['img_path'] = $photo->id;
+        }
+
+        $row['password'] = bcrypt($request['password']);
+
+        User::create($row);
         
-        // Post::create(['title'=>$request->title , 'content'=>$request->content]);
         return redirect("users");
     }
 

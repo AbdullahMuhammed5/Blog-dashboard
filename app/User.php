@@ -26,34 +26,28 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function photo(){
+        return $this->belongsTo('App\Photo');
+    }
     
     public function post(){
-        
-        return $this->hasOne('App\Post');
-        
+        return $this->hasOne('App\Post');   
     }
     
     public function posts(){
-        
         return $this->hasMany('App\Post');
-        
     }
     
     public function roles(){
-        
         return $this->belongsToMany('App\Role');
-        
     }
     
     public function role(){
-        
         return $this->belongsTo('App\Role');
-        
     }
     
     public function address(){
-        
         return $this->hasOne('App\Address');
-        
     }
 }
