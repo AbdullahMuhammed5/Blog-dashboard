@@ -55,11 +55,11 @@ class UserController extends Controller
             $row['img_id'] = $photo->id;
         }
 
-        $row['password'] = bcrypt($request['password']);
+        // $row['password'] = bcrypt($request['password']);
 
         User::create($row);
         
-        return redirect("users");
+        return redirect("/admin/users");
     }
 
     /**
@@ -105,7 +105,7 @@ class UserController extends Controller
             $row = $request->except('password');
         }else{
             $row = $request->all();
-            $row['password'] = bcrypt($request['password']);
+            // $row['password'] = bcrypt($request['password']);
         }
         if($img = $request->file('img_id')){
             $name = time() . $img->getClientOriginalName();
@@ -128,8 +128,10 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        User::whereId($id)->delete();
-        return redirect('users');
+        $user = User::findOrFail($id);
+        unlink(public_path().$user->photo->path);
+        $user->delete();
+        return redirect('admin/users');
         
     }
 }

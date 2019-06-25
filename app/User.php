@@ -34,6 +34,16 @@ class User extends Authenticatable
     public function role(){
         return $this->belongsTo('App\Role');
     }
+
+    public function setPasswordAttribute($password){
+        if(!empty($password)){
+            $this->attributes['password'] = bcrypt($password);
+        }
+    }
+    
+    public function isAdmin(){
+        return $this->role->name === "Adminstrator" ? true : false; 
+    }
     
     // public function post(){
     //     return $this->hasOne('App\Post');   

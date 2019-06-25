@@ -21,9 +21,11 @@ Auth::routes();
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::group(['middleware'=>'admin'], function(){
+    Route::resource('admin/users', 'UserController', ['as' => 'admin']);
+});
+Route::get('admin/user/delete/{id}', 'UserController@destroy');
 Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('admin/users', 'UserController', ['as' => 'admin']);
 Route::get('/admin', function(){
     return view('admin.index');
 });
