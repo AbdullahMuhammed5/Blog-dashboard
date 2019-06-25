@@ -28,7 +28,7 @@
         </div>
         <div class="form-group">
             {!! Form::label('file', 'Choose image:') !!}
-            {!! Form::file('img_path', ['class'=>'form-control']) !!}
+            {!! Form::file('img_id', ['class'=>'form-control']) !!}
         </div>
 
         <div class="form-group">

@@ -47,12 +47,12 @@ class UserController extends Controller
         
         $row = $request->all();
 
-        if($img = $request->file('img_path')){
+        if($img = $request->file('img_id')){
             $name = time() . $img->getClientOriginalName();
             $img->move('images', $name);
             $photo = Photo::create([ 'path'=>$name ]);
 
-            $row['img_path'] = $photo->id;
+            $row['img_id'] = $photo->id;
         }
 
         $row['password'] = bcrypt($request['password']);
@@ -84,8 +84,9 @@ class UserController extends Controller
     public function edit($id)
     {
         //
-        $user = User::find($id);
-        return view("users.edit", compact('user'));
+        $user = User::findOrFail($id);
+        $roles = Role::pluck('name', 'id')->all();
+        return view("admin.users.edit", compact('user', 'roles'));
         
     }
 
@@ -99,9 +100,23 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $user = User::find($id);
-        $user->update($request->all());
-        return redirect("users/$user->id");
+        $user = User::findOrFail($id);
+        if($request['password'] == ''){
+            $row = $request->except('password');
+        }else{
+            $row = $request->all();
+            $row['password'] = bcrypt($request['password']);
+        }
+        if($img = $request->file('img_id')){
+            $name = time() . $img->getClientOriginalName();
+            $img->move('images', $name);
+            $photo = Photo::create([ 'path'=>$name ]);
+
+            $row['img_id'] = $photo->id;
+        }
+
+        $user->update($row);
+        return redirect("admin/users");
     }
 
     /**
