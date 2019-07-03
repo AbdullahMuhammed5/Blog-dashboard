@@ -23,6 +23,7 @@ Route::get('/', function () {
 });
 Route::group(['middleware'=>'admin'], function(){
     Route::resource('admin/users', 'UserController', ['as' => 'admin']);
+    Route::resource('admin/posts', 'PostController', ['as' => 'admin']);
 });
 Route::get('admin/user/delete/{id}', 'UserController@destroy');
 Route::get('/home', 'HomeController@index')->name('home');

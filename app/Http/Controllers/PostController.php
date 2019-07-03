@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+// use App\Http\Controllers\Auth;
+use Auth;
+use App\Http\Requests\AddPostRequest;
 use App\Post;
+use App\Category;
+use App\Photo;
 use App\User;
     
-class PostsController extends Controller
+class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +22,7 @@ class PostsController extends Controller
     {
         //
         $posts = Post::all();
-        $user = User::all();
-        return view("posts.index", compact('posts', 'user'));
-        
+        return view("admin.posts.index", compact('posts'));
     }
 
     /**
@@ -30,7 +33,8 @@ class PostsController extends Controller
     public function create()
     {
         //
-        return view('/posts/create');
+        $categories = Category::pluck('name', 'id')->all();
+        return view('admin/posts/create', compact('categories'));
     }
 
     /**
@@ -39,17 +43,22 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AddPostRequest $request)
     {
         // return $request->title;
-        
-        $this->validate($request, [
-            'title' => 'required',
-            'content' => 'required'
-        ]);
-        
-        Post::create(['title'=>$request->title , 'content'=>$request->content]);
-        return redirect("posts");
+        $row = $request->all();
+        $user = Auth::user();
+
+        if($img = $request->file('photo_id')){
+            $name = time() . $img->getClientOriginalName();
+            $img->move('images', $name);
+            $photo = Photo::create([ 'path'=>$name ]);
+
+            $row['photo_id'] = $photo->id;
+        }
+
+        $user->posts()->create($row);
+        return redirect("/admin/posts");
     }
 
     /**
@@ -89,7 +98,6 @@ class PostsController extends Controller
     public function update(Request $request, $id)
     {
         //
-        
         $thePost = Post::find($id);
         $thePost->update($request->all());
         return redirect("posts/$thePost->id");
