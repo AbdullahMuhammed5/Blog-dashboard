@@ -25,10 +25,10 @@ class AddPostRequest extends FormRequest
     {
         return [
             //
-            // 'title'=>'required',
-            // 'content'=>'required',
-            // 'category_id'=>'required',
-            // 'photo_id'=>'required',
+            'title'=>'required',
+            'content'=>'required',
+            'category_id'=>'required',
+            'photo_id'=>'required',
         ];
     }
 }

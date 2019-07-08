@@ -30,7 +30,7 @@
                     <a href="{{route('admin.posts.edit', $post->id)}}" style="font-size: 20px;">
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a href="{{URL::to('/admin/posts/delete/'.$post->id)}}" style="font-size: 20px; color: #ff2626;"><i class="fa fa-trash"></i></a>
+                    <a href="{{URL::to('/admin/post/delete/'.$post->id)}}" style="font-size: 20px; color: #ff2626;"><i class="fa fa-trash"></i></a>
                 </td>
                 </tr>
             @endforeach

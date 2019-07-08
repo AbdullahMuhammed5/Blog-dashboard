@@ -70,8 +70,8 @@ class PostController extends Controller
     public function show($id)
     {
         //
-        $thePost = Post::find($id);
-        return view("posts.show", compact('thePost'));
+        $post = Post::find($id);
+        return view("admin.posts.show", compact('post'));
     }
 
     /**
@@ -83,9 +83,9 @@ class PostController extends Controller
     public function edit($id)
     {
         //
-        $thePost = Post::find($id);
-        return view("posts.edit", compact('thePost'));
-        
+        $post = Post::findOrFail($id);
+        $categories = Category::pluck('name', 'id')->all();
+        return view("admin.posts.edit", compact('post', 'categories'));
     }
 
     /**
@@ -98,9 +98,18 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $thePost = Post::find($id);
-        $thePost->update($request->all());
-        return redirect("posts/$thePost->id");
+        $row = $request->all();
+        $user = Auth::user();
+
+        if($img = $request->file('photo_id')){
+            $name = time() . $img->getClientOriginalName();
+            $img->move('images', $name);
+            $photo = Photo::create([ 'path'=>$name ]);
+
+            $row['photo_id'] = $photo->id;
+        }
+        Auth::user()->posts()->whereId($id)->first()->update($row);
+        return redirect("admin.posts");
     }
 
     /**
@@ -112,18 +121,12 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
-        $thePost = Post::whereId($id)->delete();
-        return redirect('posts');
-        
+        $post = Post::findOrFail($id);
+        if($post->photo){
+            unlink(public_path().$post->photo->path);
+        }
+        $post->delete();
+        return redirect('admin/posts'); 
     }
     
-    public function test($thing)
-    {
-        return view('test')->with('thing', $thing);
-    }
-    
-    public function contact()
-    {
-        return view('contact');
-    }
 }

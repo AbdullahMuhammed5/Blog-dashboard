@@ -11,9 +11,10 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
+    <link href="{{asset('css/libs.css')}}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body>
+<body id="app-container">
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
